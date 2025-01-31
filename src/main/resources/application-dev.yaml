@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: rail
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: ${PWD}
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create-drop #validate
