@@ -8,3 +8,19 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${PWD}
+  application:
+    image: railshabayev416/storehouse-project2
+    build:
+      context: .
+    container_name: application
+#    depends_on:
+#      postgres:
+#        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:mydb
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=${PWD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
