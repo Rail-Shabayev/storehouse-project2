@@ -69,9 +69,6 @@ public class ProductServiceImplTest {
     @Test
     @DisplayName("get product object from database and throw ProductNotFoundException")
     void shouldReturnProductNotFoundException() {
-        when(productRepository.findById(any(UUID.class))).thenReturn(Optional.of(product));
-        when(productMapper.productToDto(any(Product.class))).thenReturn(productDto);
-
         assertThatThrownBy(() -> productService.getProduct(UUID.randomUUID()))
                 .isInstanceOf(ProductNotFoundException.class);
     }

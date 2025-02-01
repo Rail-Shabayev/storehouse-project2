@@ -41,7 +41,7 @@ public class Product {
     private int quantity;
 
     @UpdateTimestamp
-    @Column(name = "update_at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @CreationTimestamp

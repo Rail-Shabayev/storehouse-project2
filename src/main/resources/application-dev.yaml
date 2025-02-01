@@ -7,4 +7,6 @@ spring:
     username: postgres
   jpa:
     hibernate:
-      ddl-auto: create-drop #validate
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:/db.changelog/db.changelog-master.yaml
