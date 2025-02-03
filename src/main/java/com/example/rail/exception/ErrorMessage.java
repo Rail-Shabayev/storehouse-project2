@@ -1,19 +1,24 @@
 package com.example.rail.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ErrorMessage {
-    private int statusCode;
-    private LocalDateTime timestamp;
-    private String message;
-    private String description;
+    private String exceptionName;
+    private String exceptionClass;
+    private String exceptionMessage;
+    private LocalDateTime exceptionDateTime;
+
+    public ErrorMessage(String exceptionName, String exceptionClass, String exceptionMessage) {
+        this.exceptionName = exceptionName;
+        this.exceptionClass = exceptionClass;
+        this.exceptionMessage = exceptionMessage;
+        this.exceptionDateTime = LocalDateTime.now();
+    }
 }
