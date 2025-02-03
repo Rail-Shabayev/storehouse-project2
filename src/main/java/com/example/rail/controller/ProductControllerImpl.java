@@ -6,6 +6,7 @@ import com.example.rail.dto.product.ProductResponseDto;
 import com.example.rail.dto.product.UpdateProductDto;
 import com.example.rail.mapper.ProductMapper;
 import com.example.rail.service.ProductServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,13 +41,13 @@ public class ProductControllerImpl implements ProductController {
 
     @PostMapping
     @ResponseStatus(CREATED) //201
-    public UUID saveProduct(@RequestBody CreateProductDto product) {
+    public UUID saveProduct(@RequestBody @Valid CreateProductDto product) {
         ProductDto productDto = productMapper.createProductDtoToProductDto(product);
         return productServiceImpl.saveProduct(productDto);
     }
 
     @PutMapping("/{uuid}")
-    public void putProduct(@RequestBody UpdateProductDto productDto, @PathVariable("uuid") UUID uuid) {
+    public void putProduct(@RequestBody @Valid UpdateProductDto productDto, @PathVariable("uuid") UUID uuid) {
         ProductDto updatedProduct = productMapper.updateProductDtoToProductDto(productDto);
         productServiceImpl.putProduct(uuid, updatedProduct);
     }

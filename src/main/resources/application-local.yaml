@@ -6,6 +6,6 @@ spring:
     password: ${PWD}
     username: sa
   jpa:
-    hibernate.ddl-auto: validate
+    hibernate.ddl-auto: create
   liquibase:
-    change-log: classpath:/db.changelog/db.changelog-master.yaml
+    enabled: false
