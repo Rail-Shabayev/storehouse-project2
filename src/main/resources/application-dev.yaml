@@ -7,6 +7,15 @@ spring:
     username: postgres
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
   liquibase:
     change-log: classpath:/db.changelog/db.changelog-master.xml
+
+app:
+  scheduling:
+    enabled: true
+    optimization: true
+    fixedDelay: 10000 #ms
+    priceIncreasePercentage: 10.1
+    optimize:
+      exclusive-lock: true
