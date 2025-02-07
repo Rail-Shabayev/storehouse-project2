@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,13 +14,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @UuidGenerator
+    @Column(name = "uuid", updatable = false, nullable = false)
     private UUID uuid;
 
     @Column(name = "name", nullable = false)
@@ -45,7 +45,7 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDate createdAt;
 }
 

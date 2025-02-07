@@ -14,10 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 @Slf4j
 @Component
@@ -27,6 +31,9 @@ import java.sql.*;
 @RequiredArgsConstructor
 public class OptimizedScheduler {
     private static final int BATCH_SIZE = 10000;
+    private static final String SELECT_QUERY = "SELECT * FROM product FOR UPDATE";
+    private static final String UPDATE_QUERY = "UPDATE product SET price = ? WHERE uuid= ?";
+    private static final String LOCK = "LOCK TABLE product IN ACCESS EXCLUSIVE MODE";
 
     private final DataSource dataSource;
 
@@ -39,21 +46,19 @@ public class OptimizedScheduler {
     @Scheduled(fixedDelayString = "${app.scheduling.fixedDelay}")
     @TrackExecutionTime
     @Transactional
-    public void optimizedIncreasePriceScheduler() {
-        try {
-            Connection conn = dataSource.getConnection();
+    public void optimizedIncreasePriceScheduler() throws SQLException {
+        Connection conn = dataSource.getConnection();
+        try (BufferedWriter bw = new BufferedWriter(
+                new FileWriter("src/main/resources/file.txt"))) {
             conn.setAutoCommit(false);
             if (exclusiveLock) {
-                String lock = "LOCK TABLE product IN ACCESS EXCLUSIVE MODE";
                 Statement lockStatement = conn.createStatement();
-                lockStatement.execute(lock);
+                lockStatement.execute(LOCK);
             }
-            String query = "SELECT * FROM product FOR UPDATE";
-            PreparedStatement updateStmt =
-                    conn.prepareStatement("UPDATE product SET price = ? WHERE uuid= ?");
+            PreparedStatement updateStmt = conn.prepareStatement(UPDATE_QUERY);
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            BufferedWriter bw = new BufferedWriter(new FileWriter("src/main/resources/file.txt"));
+            ResultSet rs = stmt.executeQuery(SELECT_QUERY);
+
             int count = 0;
             while (rs.next()) {
                 bw.write(buildString(rs, count));
@@ -73,7 +78,8 @@ public class OptimizedScheduler {
             }
             updateStmt.executeBatch();
             conn.commit();
-        } catch (SQLException | IOException e) {
+        } catch (Exception e) {
+            conn.rollback();
             throw new RuntimeException(e);
         }
     }

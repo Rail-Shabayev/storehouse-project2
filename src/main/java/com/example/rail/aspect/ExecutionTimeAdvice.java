@@ -14,9 +14,13 @@ public class ExecutionTimeAdvice {
     @Around("@annotation(com.example.rail.annotation.TrackExecutionTime)")
     public Object executionTime(ProceedingJoinPoint point) throws Throwable {
         long startTime = System.currentTimeMillis();
-        Object object = point.proceed();
-        long endtime = System.currentTimeMillis();
-        log.info("Method Name: {}. Time: {}ms", point.getSignature().getName(), endtime - startTime);
+        Object object;
+        try{
+             object = point.proceed();
+        } finally {
+            long endTime = System.currentTimeMillis();
+            log.info("Method Name: {}. Time: {}ms", point.getSignature().getName(), endTime - startTime);
+        }
         return object;
     }
 }
