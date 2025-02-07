@@ -2,8 +2,6 @@ package com.example.rail.dto.product;
 
 
 import com.example.rail.model.Category;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +11,6 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@Builder
-@AllArgsConstructor
 public class ProductDto {
     private String name;
     private Long article;
