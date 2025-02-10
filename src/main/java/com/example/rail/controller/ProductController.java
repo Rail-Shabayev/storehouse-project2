@@ -1,5 +1,6 @@
 package com.example.rail.controller;
 
+import com.example.rail.dto.search.SearchCriteria;
 import com.example.rail.dto.product.CreateProductDto;
 import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Product", description = "Product Api")
@@ -100,4 +102,7 @@ public interface ProductController {
                     content = @Content(schema = @Schema(example = "Product not found"))),
     })
     void deleteProduct(@Parameter(required = true, description = "UUID of product") UUID uuid);
+
+    Page<ProductResponseDto> searchProduct(Pageable pageable, List<SearchCriteria> searchCriteria);
+
 }
