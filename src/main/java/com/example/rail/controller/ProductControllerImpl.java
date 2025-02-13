@@ -1,5 +1,6 @@
 package com.example.rail.controller;
 
+import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.dto.product.CreateProductDto;
 import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -56,5 +58,10 @@ public class ProductControllerImpl implements ProductController {
     @ResponseStatus(NO_CONTENT) //204
     public void deleteProduct(@PathVariable("uuid") UUID uuid) {
         productServiceImpl.deleteProduct(uuid);
+    }
+
+    @PostMapping("/{search}")
+    public Page<ProductResponseDto> searchProduct(Pageable pageable, @RequestBody List<AbstractCriteria<?>> abstractCriteria) {
+        return productServiceImpl.searchProduct(pageable, abstractCriteria);
     }
 }

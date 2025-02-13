@@ -1,6 +1,8 @@
 package com.example.rail.service;
 
 import com.example.rail.dto.product.ProductDto;
+import com.example.rail.dto.product.ProductResponseDto;
+import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.exception.ArticleAlreadyExistsException;
 import com.example.rail.exception.ProductNotFoundException;
 import com.example.rail.mapper.ProductMapper;
@@ -10,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -54,5 +58,17 @@ public class ProductServiceImpl implements ProductService {
 
     public void deleteProduct(UUID uuid) {
         productRepository.deleteById(uuid);
+    }
+
+    public Page<ProductResponseDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria) {
+        if (abstractCriteria.isEmpty()) {
+            return null;
+        }
+        Specification<Product> result = null;
+        for (AbstractCriteria<?> criteria : abstractCriteria) {
+            result = Specification.where(result).and(criteria.getStrategy());
+        }
+        Page<ProductDto> productDtos = productRepository.findAll(result, pageable).map(mapper::productToDto);
+        return productDtos.map(mapper::dtoToResponse);
     }
 }
