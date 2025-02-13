@@ -1,6 +1,6 @@
 package com.example.rail.service;
 
-import com.example.rail.dto.search.SearchCriteria;
+import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
 import org.springframework.data.domain.Page;
@@ -20,6 +20,6 @@ public interface ProductService {
 
     void deleteProduct(UUID uuid);
 
-    Page<ProductResponseDto> searchProduct(Pageable pageable, List<SearchCriteria> searchCriteria);
+    Page<ProductResponseDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria);
 }
 

@@ -2,7 +2,7 @@ package com.example.rail.service;
 
 import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
-import com.example.rail.dto.search.SearchCriteria;
+import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.exception.ArticleAlreadyExistsException;
 import com.example.rail.exception.ProductNotFoundException;
 import com.example.rail.mapper.ProductMapper;
@@ -60,18 +60,15 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(uuid);
     }
 
-    public Page<ProductResponseDto> searchProduct(Pageable pageable, List<SearchCriteria> searchCriteria) {
-        return searchProductByCriteria(pageable, searchCriteria).map(mapper::dtoToResponse);
-    }
-
-    private Page<ProductDto> searchProductByCriteria(Pageable pageable, List<SearchCriteria> searchCriteria) {
-        if (searchCriteria.isEmpty()) {
+    public Page<ProductResponseDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria) {
+        if (abstractCriteria.isEmpty()) {
             return null;
         }
         Specification<Product> result = null;
-        for (SearchCriteria criteria : searchCriteria) {
-            result = Specification.where(result).and(criteria);
+        for (AbstractCriteria<?> criteria : abstractCriteria) {
+            result = Specification.where(result).and(criteria.getStrategy());
         }
-        return productRepository.findAll(result, pageable).map(mapper::productToDto);
+        Page<ProductDto> productDtos = productRepository.findAll(result, pageable).map(mapper::productToDto);
+        return productDtos.map(mapper::dtoToResponse);
     }
 }
