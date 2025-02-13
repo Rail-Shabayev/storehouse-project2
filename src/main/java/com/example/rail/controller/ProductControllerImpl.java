@@ -1,6 +1,6 @@
 package com.example.rail.controller;
 
-import com.example.rail.dto.search.SearchCriteria;
+import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.dto.product.CreateProductDto;
 import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
@@ -61,7 +61,7 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @PostMapping("/{search}")
-    public Page<ProductResponseDto> searchProduct(Pageable pageable, @RequestBody List<SearchCriteria> searchCriteria) {
-        return productServiceImpl.searchProduct(pageable, searchCriteria);
+    public Page<ProductResponseDto> searchProduct(Pageable pageable, @RequestBody List<AbstractCriteria<?>> abstractCriteria) {
+        return productServiceImpl.searchProduct(pageable, abstractCriteria);
     }
 }

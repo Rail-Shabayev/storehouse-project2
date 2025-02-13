@@ -1,10 +1,9 @@
 package com.example.rail.controller;
 
-import com.example.rail.dto.search.SearchCriteria;
 import com.example.rail.dto.product.CreateProductDto;
-import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
 import com.example.rail.dto.product.UpdateProductDto;
+import com.example.rail.dto.search.AbstractCriteria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,7 +25,7 @@ public interface ProductController {
                     description = "Success",
                     responseCode = "200",
                     content = @Content(
-                            mediaType = "application/json", schema = @Schema(implementation = ProductDto.class))),
+                            mediaType = "application/json", schema = @Schema(implementation = ProductResponseDto.class))),
             @ApiResponse(
                     description = "Bad request",
                     responseCode = "400",
@@ -40,7 +39,7 @@ public interface ProductController {
                     description = "Success",
                     responseCode = "200",
                     content = @Content(
-                            mediaType = "application/json", schema = @Schema(implementation = ProductDto.class))),
+                            mediaType = "application/json", schema = @Schema(implementation = ProductResponseDto.class))),
             @ApiResponse(
                     description = "Bad request",
                     responseCode = "400",
@@ -103,6 +102,18 @@ public interface ProductController {
     })
     void deleteProduct(@Parameter(required = true, description = "UUID of product") UUID uuid);
 
-    Page<ProductResponseDto> searchProduct(Pageable pageable, List<SearchCriteria> searchCriteria);
+    @Operation(summary = "Get products by search criteria")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    description = "Successful request",
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json", schema = @Schema(implementation = ProductResponseDto.class))),
+            @ApiResponse(
+                    description = "Bad request",
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(example = "{\"name\":\"string\"}"))),
+    })
+    Page<ProductResponseDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria);
 
 }
