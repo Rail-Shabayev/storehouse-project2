@@ -19,3 +19,10 @@ app:
     priceIncreasePercentage: 10.1
     optimize:
       exclusive-lock: true
+rest:
+  currency-service:
+    host: http://localhost:8081
+    methods:
+      get-currency: /api/v1/currencies
+    mock:
+      enabled: false

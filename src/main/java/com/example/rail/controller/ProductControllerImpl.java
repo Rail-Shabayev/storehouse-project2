@@ -1,10 +1,10 @@
 package com.example.rail.controller;
 
-import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.dto.product.CreateProductDto;
 import com.example.rail.dto.product.ProductDto;
 import com.example.rail.dto.product.ProductResponseDto;
 import com.example.rail.dto.product.UpdateProductDto;
+import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.mapper.ProductMapper;
 import com.example.rail.service.ProductServiceImpl;
 import jakarta.validation.Valid;
@@ -41,6 +41,14 @@ public class ProductControllerImpl implements ProductController {
         return productMapper.dtoToResponse(productServiceImpl.getProduct(uuid));
     }
 
+    @PostMapping("/{search}")
+    public Page<ProductResponseDto> searchProduct(Pageable pageable, @RequestBody List<AbstractCriteria<?>> abstractCriteria) {
+        return new PageImpl<>(productServiceImpl.searchProduct(pageable, abstractCriteria)
+                .stream()
+                .map(productMapper::dtoToResponse)
+                .toList());
+    }
+
     @PostMapping
     @ResponseStatus(CREATED) //201
     public UUID saveProduct(@RequestBody @Valid CreateProductDto product) {
@@ -58,10 +66,5 @@ public class ProductControllerImpl implements ProductController {
     @ResponseStatus(NO_CONTENT) //204
     public void deleteProduct(@PathVariable("uuid") UUID uuid) {
         productServiceImpl.deleteProduct(uuid);
-    }
-
-    @PostMapping("/{search}")
-    public Page<ProductResponseDto> searchProduct(Pageable pageable, @RequestBody List<AbstractCriteria<?>> abstractCriteria) {
-        return productServiceImpl.searchProduct(pageable, abstractCriteria);
     }
 }
