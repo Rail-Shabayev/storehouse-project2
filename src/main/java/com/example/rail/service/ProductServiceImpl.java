@@ -1,7 +1,7 @@
 package com.example.rail.service;
 
+import com.example.rail.currency.ExchangeRateProvider;
 import com.example.rail.dto.product.ProductDto;
-import com.example.rail.dto.product.ProductResponseDto;
 import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.exception.ArticleAlreadyExistsException;
 import com.example.rail.exception.ProductNotFoundException;
@@ -21,20 +21,40 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-
     private final ProductRepository productRepository;
     private final ProductMapper mapper;
+    private final ExchangeRateProvider exchangeRateProvider;
 
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         return new PageImpl<>(productRepository.findAll(pageable)
                 .stream()
                 .map(mapper::productToDto)
+                .peek(exchangeRateProvider::convertProductPrice)
                 .toList());
     }
 
     public ProductDto getProduct(UUID uuid) {
-        return mapper.productToDto(productRepository.findById(uuid)
-                .orElseThrow(() -> new ProductNotFoundException("Product with that uuid is absent in DB")));
+        ProductDto productDto = mapper.productToDto(productRepository.findById(uuid)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Product with that uuid is absent in DB")));
+        exchangeRateProvider.convertProductPrice(productDto);
+        return productDto;
+    }
+
+    public Page<ProductDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria) {
+        if (abstractCriteria.isEmpty()) {
+            return null;
+        }
+        Specification<Product> result = null;
+        for (AbstractCriteria<?> criteria : abstractCriteria) {
+            result = Specification.where(result).and(criteria.getStrategy());
+        }
+        List<ProductDto> productDtos = productRepository.findAll(result, pageable)
+                .stream()
+                .map(mapper::productToDto)
+                .peek(exchangeRateProvider::convertProductPrice)
+                .toList();
+        return new PageImpl<>(productDtos);
     }
 
     public UUID saveProduct(ProductDto productDto) {
@@ -58,17 +78,5 @@ public class ProductServiceImpl implements ProductService {
 
     public void deleteProduct(UUID uuid) {
         productRepository.deleteById(uuid);
-    }
-
-    public Page<ProductResponseDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria) {
-        if (abstractCriteria.isEmpty()) {
-            return null;
-        }
-        Specification<Product> result = null;
-        for (AbstractCriteria<?> criteria : abstractCriteria) {
-            result = Specification.where(result).and(criteria.getStrategy());
-        }
-        Page<ProductDto> productDtos = productRepository.findAll(result, pageable).map(mapper::productToDto);
-        return productDtos.map(mapper::dtoToResponse);
     }
 }
