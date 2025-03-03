@@ -5,7 +5,7 @@ import com.example.rail.dto.order.EditOrderStatusDto;
 import com.example.rail.dto.order.OrderResponseDto;
 import com.example.rail.dto.order.UpdateOrderDto;
 import com.example.rail.mapper.OrderMapper;
-import com.example.rail.service.OrderService;
+import com.example.rail.service.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,38 +25,38 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/order")
 public class OrderControllerImpl implements OrderController {
-    private final OrderService orderService;
+    private final OrderServiceImpl orderServiceImpl;
     private final OrderMapper orderMapper;
 
     @GetMapping("/{id}")
     public OrderResponseDto findOrder(@RequestHeader("CustomerId") Long customerId, @PathVariable UUID id) {
-        return orderMapper.toOrderResponseDto(orderService.findOrder(customerId, id));
+        return orderMapper.toOrderResponseDto(orderServiceImpl.findOrder(customerId, id));
     }
 
     @PostMapping
     public UUID createOrder(@RequestHeader("CustomerId") Long customerId, @RequestBody CreateOrderDto createOrderDto) {
-        return orderService.addOrder(customerId, orderMapper.toAddOrderDto(createOrderDto));
+        return orderServiceImpl.addOrder(customerId, orderMapper.toAddOrderDto(createOrderDto));
     }
 
     @PatchMapping("/{id}")
     public UUID editOrder(@RequestHeader("CustomerId") Long customerId, @PathVariable UUID id,
                           @RequestBody UpdateOrderDto updateOrderDto) {
-        return orderService.editOrder(customerId, id, orderMapper.toEditOrderDto(updateOrderDto));
+        return orderServiceImpl.editOrder(customerId, id, orderMapper.toEditOrderDto(updateOrderDto));
     }
 
     @PatchMapping("/{id}/orderStatus")
     public void editOrderStatus(@PathVariable UUID id, @RequestBody EditOrderStatusDto editOrderStatusDto) {
-        orderService.editOrderStatus(id, editOrderStatusDto);
+        orderServiceImpl.editOrderStatus(id, editOrderStatusDto);
     }
 
     @PostMapping("/{id}/confirm")
     public void confirmOrder(@RequestHeader("CustomerId") Long customerId, @PathVariable UUID id) {
-        orderService.confirmOrder(customerId, id);
+        orderServiceImpl.confirmOrder(customerId, id);
     }
 
     @DeleteMapping("/{id}")
     public void deleteOrder(@RequestHeader("CustomerId") Long customerId, @PathVariable UUID id) {
-        orderService.deleteOrder(customerId, id);
+        orderServiceImpl.deleteOrder(customerId, id);
     }
 
 
