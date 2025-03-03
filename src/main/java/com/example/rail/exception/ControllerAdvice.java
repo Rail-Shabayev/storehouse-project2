@@ -30,7 +30,43 @@ public class ControllerAdvice {
                 exception.getMessage());
     }
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(ProductNotEnoughException.class)
+    public ErrorMessage handleProductNotEnoughException(Throwable exception) {
+        return new ErrorMessage(exception.getClass().getSimpleName(),
+                exception.getStackTrace()[0].getClassName(),
+                exception.getMessage());
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(ProductNotAvailableException.class)
+    public ErrorMessage handleProductNotAvailableException(Throwable exception) {
+        return new ErrorMessage(exception.getClass().getSimpleName(),
+                exception.getStackTrace()[0].getClassName(),
+                exception.getMessage());
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(ProductNotAvailableException.class)
+    public ErrorMessage handleCustomerOrderNotMatchException(Throwable exception) {
+        return new ErrorMessage(exception.getClass().getSimpleName(),
+                exception.getStackTrace()[0].getClassName(),
+                exception.getMessage());
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(OrderHasNotCreatedStatusException.class)
+    public ErrorMessage handleOrderHasNotCreatedStatusException(Throwable exception) {
+        return new ErrorMessage(exception.getClass().getSimpleName(),
+                exception.getStackTrace()[0].getClassName(),
+                exception.getMessage());
+    }
+
+    @ExceptionHandler({
+            ProductNotFoundException.class,
+            CustomerNotFoundException.class,
+            OrderNotFoundException.class
+    })
     @ResponseStatus(NOT_FOUND)
     public ErrorMessage handleProductNotFound(ProductNotFoundException exception) {
         return new ErrorMessage(exception.getClass().getSimpleName(),
