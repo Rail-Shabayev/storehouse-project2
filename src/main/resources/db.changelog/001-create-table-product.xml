@@ -35,4 +35,11 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="addColum_isAvailable" author="rail" runOnChange="true">
+        <addColumn tableName="product">
+            <column name="is_available" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
