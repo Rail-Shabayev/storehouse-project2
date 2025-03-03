@@ -2,7 +2,11 @@ package com.example.rail.search;
 
 import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.model.Product;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 import java.time.LocalDate;
 
