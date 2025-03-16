@@ -22,7 +22,8 @@ public class CurrencyServiceClientImpl implements CurrencyServiceClient {
     public @Nullable ExchangeRate getCurrencies() {
         try {
             return webClient.get()
-                    .uri(restConfigProperties.getMethods().get("get-currency"))
+                    .uri(restConfigProperties.getHost() +
+                            restConfigProperties.getMethods().get("get-currency"))
                     .retrieve()
                     .bodyToMono(ExchangeRate.class)
                     .retry(2)

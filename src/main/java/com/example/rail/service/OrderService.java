@@ -3,20 +3,27 @@ package com.example.rail.service;
 import com.example.rail.dto.order.AddOrderDto;
 import com.example.rail.dto.order.EditOrderDto;
 import com.example.rail.dto.order.EditOrderStatusDto;
+import com.example.rail.dto.order.OrderInfo;
 import com.example.rail.dto.order.OrderInfoDto;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public interface OrderService {
-    public OrderInfoDto findOrder(Long customerId, UUID id);
+    OrderInfoDto findOrder(Long customerId, UUID id);
 
-    public UUID addOrder(Long customerId, AddOrderDto createOrderDto);
+    UUID addOrder(Long customerId, AddOrderDto createOrderDto);
 
-    public UUID editOrder(Long customerId, UUID id, EditOrderDto editOrderDto);
+    UUID editOrder(Long customerId, UUID id, EditOrderDto editOrderDto);
 
-    public void deleteOrder(Long customerId, UUID id);
+    void deleteOrder(Long customerId, UUID id);
 
-    public void editOrderStatus(UUID id, EditOrderStatusDto editOrderStatusDto);
+    void editOrderStatus(UUID id, EditOrderStatusDto editOrderStatusDto);
 
-    public void confirmOrder(Long customerId, UUID id);
+    void confirmOrder(Long customerId, UUID id);
+
+    Map<UUID, List<OrderInfo>> getProductInfo() throws ExecutionException, InterruptedException;
+
 }
