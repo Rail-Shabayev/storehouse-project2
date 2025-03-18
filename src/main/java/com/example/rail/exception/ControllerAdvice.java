@@ -47,7 +47,7 @@ public class ControllerAdvice {
     }
 
     @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler(ProductNotAvailableException.class)
+    @ExceptionHandler(CustomerOrderNotMatchException.class)
     public ErrorMessage handleCustomerOrderNotMatchException(Throwable exception) {
         return new ErrorMessage(exception.getClass().getSimpleName(),
                 exception.getStackTrace()[0].getClassName(),

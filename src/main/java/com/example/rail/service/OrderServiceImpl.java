@@ -1,8 +1,10 @@
 package com.example.rail.service;
 
+import com.example.rail.dto.customer.CustomerInfo;
 import com.example.rail.dto.order.AddOrderDto;
 import com.example.rail.dto.order.EditOrderDto;
 import com.example.rail.dto.order.EditOrderStatusDto;
+import com.example.rail.dto.order.OrderInfo;
 import com.example.rail.dto.order.OrderInfoDto;
 import com.example.rail.dto.order.OrderItemDto;
 import com.example.rail.dto.product.ProductInOrderDto;
@@ -13,6 +15,8 @@ import com.example.rail.exception.OrderNotFoundException;
 import com.example.rail.exception.ProductNotAvailableException;
 import com.example.rail.exception.ProductNotEnoughException;
 import com.example.rail.exception.ProductNotFoundException;
+import com.example.rail.Integration.account.AccountServiceClientImpl;
+import com.example.rail.Integration.crm.TinServiceClientImpl;
 import com.example.rail.model.Customer;
 import com.example.rail.model.Order;
 import com.example.rail.model.OrderItem;
@@ -35,13 +39,50 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
     private final OrderItemRepository orderItemRepository;
+    private final AccountServiceClientImpl accountServiceClientImplClient;
+    private final TinServiceClientImpl crmServiceClient;
+
+    @Override
+    public Map<UUID, List<OrderInfo>> getProductInfo() {
+        List<String> logins = customerRepository.findAll().stream()
+                .map(Customer::getLogin)
+                .distinct()
+                .toList();
+        List<Order> orders = orderRepository.findAllValidOrders();
+
+        return orders.stream()
+                .flatMap(order -> order.getOrderItems().stream())
+                .collect(groupingBy(orderItem -> orderItem.getProduct().getUuid(),
+                        mapping(orderItem -> {
+                            Order order = orderItem.getOrder();
+                            Customer customer = order.getCustomer();
+                            return OrderInfo.builder()
+                                    .uuid(order.getUuid())
+                                    .deliveryAddress(order.getDeliveryAddress())
+                                    .status(order.getOrderStatus())
+                                    .quantity(orderItem.getQuantity())
+                                    .customerInfo(CustomerInfo.builder()
+                                            .id(customer.getId())
+                                            .email(customer.getEmail())
+                                            .inn(accountServiceClientImplClient.getCustomerAccounts(logins)
+                                                    .join().get(customer.getLogin()))
+                                            .accountNumber(crmServiceClient.getCustomerInns(logins)
+                                                    .join().get(customer.getLogin()))
+                                            .build())
+                                    .build();
+                        }, toList())));
+    }
 
     @Transactional(readOnly = true)
     public OrderInfoDto findOrder(Long customerId, UUID id) {

@@ -1,16 +1,19 @@
 package com.example.rail.configuration;
 
-import lombok.Data;
+import com.example.rail.configuration.serviceProperties.AccountServiceProperties;
+import com.example.rail.configuration.serviceProperties.CrmServiceProperties;
+import com.example.rail.configuration.serviceProperties.CurrencyServiceProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Map;
-
-@Data
+@Getter
+@Setter
 @Configuration
-@ConfigurationProperties(prefix = "rest.currency-service")
+@ConfigurationProperties(prefix = "rest")
 public class RestConfigProperties {
-    private String host;
-    private Map<String, String> methods;
-
+    private CurrencyServiceProperties currencyService;
+    private AccountServiceProperties accountService;
+    private CrmServiceProperties crmService;
 }

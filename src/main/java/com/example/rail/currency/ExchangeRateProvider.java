@@ -1,6 +1,6 @@
 package com.example.rail.currency;
 
-import com.example.rail.currency.interaction.CurrencyServiceClientImpl;
+import com.example.rail.Integration.currency.CurrencyServiceClientImpl;
 import com.example.rail.dto.product.ProductDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

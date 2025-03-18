@@ -11,9 +11,23 @@ public class WebClientConfiguration {
     private final RestConfigProperties restConfigProperties;
 
     @Bean
-    public WebClient webClient() {
+    public WebClient webClientCurrency() {
         return WebClient.builder()
-                .baseUrl(restConfigProperties.getHost())
+                .baseUrl(restConfigProperties.getCurrencyService().getHost())
+                .build();
+    }
+
+    @Bean
+    public WebClient webClientAccount() {
+        return WebClient.builder()
+                .baseUrl(restConfigProperties.getAccountService().getHost())
+                .build();
+    }
+
+    @Bean
+    public WebClient webClientCrm() {
+        return WebClient.builder()
+                .baseUrl(restConfigProperties.getCrmService().getHost())
                 .build();
     }
 }

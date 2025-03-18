@@ -2,6 +2,7 @@ package com.example.rail.controller;
 
 import com.example.rail.dto.order.CreateOrderDto;
 import com.example.rail.dto.order.EditOrderStatusDto;
+import com.example.rail.dto.order.OrderInfo;
 import com.example.rail.dto.order.OrderResponseDto;
 import com.example.rail.dto.order.UpdateOrderDto;
 import com.example.rail.mapper.OrderMapper;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -27,6 +30,11 @@ import java.util.UUID;
 public class OrderControllerImpl implements OrderController {
     private final OrderServiceImpl orderServiceImpl;
     private final OrderMapper orderMapper;
+
+    @GetMapping("/info/product")
+    public Map<UUID, List<OrderInfo>> getProductInfo() {
+        return orderServiceImpl.getProductInfo();
+    }
 
     @GetMapping("/{id}")
     public OrderResponseDto findOrder(@RequestHeader("CustomerId") Long customerId, @PathVariable UUID id) {
@@ -57,16 +65,5 @@ public class OrderControllerImpl implements OrderController {
     @DeleteMapping("/{id}")
     public void deleteOrder(@RequestHeader("CustomerId") Long customerId, @PathVariable UUID id) {
         orderServiceImpl.deleteOrder(customerId, id);
-    }
-
-
-    @PostMapping("/{orderId}/confirm")
-    public void doSomething() {
-        //todo fifth endpoint in the future
-    }
-
-    @PatchMapping("/{orderId}/orderStatus")
-    public void doSomething2() {
-        //todo sixth endpoint in the future
     }
 }

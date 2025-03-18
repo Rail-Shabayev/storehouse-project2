@@ -1,4 +1,4 @@
-package com.example.rail.currency.interaction;
+package com.example.rail.Integration.currency;
 
 import com.example.rail.currency.ExchangeRate;
 

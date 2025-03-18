@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  labels:
+    app: product-app
+spec:
+  selector:
+    app: product-app
+  ports:
+    - protocol: TCP
+      name: web
+      port: 8088
+      targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-deployment
+  labels:
+    app: product-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: product-app
+  template:
+    metadata:
+      labels:
+        app: product-app
+    spec:
+      containers:
+        - name: product
+          image: railshabayev416/storehouse-project2:latest
+          ports:
+            - containerPort: 8080
+              name: app
