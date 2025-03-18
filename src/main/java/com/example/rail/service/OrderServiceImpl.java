@@ -15,6 +15,8 @@ import com.example.rail.exception.OrderNotFoundException;
 import com.example.rail.exception.ProductNotAvailableException;
 import com.example.rail.exception.ProductNotEnoughException;
 import com.example.rail.exception.ProductNotFoundException;
+import com.example.rail.Integration.account.AccountServiceClientImpl;
+import com.example.rail.Integration.crm.TinServiceClientImpl;
 import com.example.rail.model.Customer;
 import com.example.rail.model.Order;
 import com.example.rail.model.OrderItem;
@@ -28,16 +30,12 @@ import com.example.rail.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -52,34 +50,15 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
     private final OrderItemRepository orderItemRepository;
-    private final WebClient webClient;
+    private final AccountServiceClientImpl accountServiceClientImplClient;
+    private final TinServiceClientImpl crmServiceClient;
 
     @Override
-    public Map<UUID, List<OrderInfo>> getProductInfo() throws ExecutionException, InterruptedException {
-        List<Customer> customers = customerRepository.findAll();
-        List<String> logins = customers
-                .stream()
+    public Map<UUID, List<OrderInfo>> getProductInfo() {
+        List<String> logins = customerRepository.findAll().stream()
                 .map(Customer::getLogin)
+                .distinct()
                 .toList();
-        CompletableFuture<Map> accountNums = webClient
-                .post()
-                .uri("http://localhost:8082/api/v2/accountNum")
-                .body(BodyInserters.fromValue(logins))
-                .retrieve()
-                .bodyToMono(Map.class)
-                .toFuture();
-
-        CompletableFuture<Map> tins = webClient
-                .post()
-                .uri("http://localhost:8083/api/v3/tin")
-                .body(BodyInserters.fromValue(logins))
-                .retrieve()
-                .bodyToMono(Map.class)
-                .toFuture();
-
-        Map<String, String> accountNumsMap = accountNums.get();
-        Map<String, String> tinsMap = tins.get();
-
         List<Order> orders = orderRepository.findAllValidOrders();
 
         return orders.stream()
@@ -96,8 +75,10 @@ public class OrderServiceImpl implements OrderService {
                                     .customerInfo(CustomerInfo.builder()
                                             .id(customer.getId())
                                             .email(customer.getEmail())
-                                            .inn(tinsMap.get(customer.getLogin()))
-                                            .accountNumber(accountNumsMap.get(customer.getLogin()))
+                                            .inn(accountServiceClientImplClient.getCustomerAccounts(logins)
+                                                    .join().get(customer.getLogin()))
+                                            .accountNumber(crmServiceClient.getCustomerInns(logins)
+                                                    .join().get(customer.getLogin()))
                                             .build())
                                     .build();
                         }, toList())));

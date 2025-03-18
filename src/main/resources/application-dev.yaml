@@ -26,3 +26,14 @@ rest:
       get-currency: /api/v1/currencies
     mock:
       enabled: false
+
+  account-service:
+    host: http://localhost:8082
+    methods:
+      get-accountNum: /api/v2/accountNum
+
+  crm-service:
+    host: http://localhost:8083
+    methods:
+      get-tin: /api/v3/tin
+

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -33,7 +32,7 @@ public class OrderControllerImpl implements OrderController {
     private final OrderMapper orderMapper;
 
     @GetMapping("/info/product")
-    public Map<UUID, List<OrderInfo>> getProductInfo() throws ExecutionException, InterruptedException {
+    public Map<UUID, List<OrderInfo>> getProductInfo() {
         return orderServiceImpl.getProductInfo();
     }
 

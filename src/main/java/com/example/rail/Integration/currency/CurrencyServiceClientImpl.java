@@ -1,4 +1,4 @@
-package com.example.rail.currency.interaction;
+package com.example.rail.Integration.currency;
 
 import com.example.rail.configuration.RestConfigProperties;
 import com.example.rail.currency.ExchangeRate;
@@ -13,17 +13,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 @RequiredArgsConstructor
 public class CurrencyServiceClientImpl implements CurrencyServiceClient {
-
+    private final WebClient webClientCurrency;
     private final RestConfigProperties restConfigProperties;
-    private final WebClient webClient;
 
     @Override
     @Cacheable(value = "currencies", unless = "#result == null")
     public @Nullable ExchangeRate getCurrencies() {
         try {
-            return webClient.get()
-                    .uri(restConfigProperties.getHost() +
-                            restConfigProperties.getMethods().get("get-currency"))
+            return webClientCurrency.get()
+                    .uri(restConfigProperties.getCurrencyService().getMethods().get("get-currency"))
                     .retrieve()
                     .bodyToMono(ExchangeRate.class)
                     .retry(2)
