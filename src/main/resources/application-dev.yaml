@@ -37,3 +37,6 @@ rest:
     methods:
       get-tin: /api/v3/tin
 
+kafka:
+  groupId: group1
+  bootstrapAddress: localhost:9092
