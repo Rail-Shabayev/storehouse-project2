@@ -31,7 +31,7 @@ public class KafkaConsumerConfig {
                 kafkaConfigProperties.getGroupId());
         props.put(
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                ByteArrayDeserializer.class);
+                StringDeserializer.class);
         props.put(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 ByteArrayDeserializer.class);
