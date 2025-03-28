@@ -25,6 +25,18 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${PWD}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
 
+  localstack:
+    container_name: "LocalStack-Demo"
+    image: localstack/localstack
+    network_mode: bridge
+    ports:
+      - "4566:4566" # Edge Port
+      - "4569:4569" # Dynamo DB port
+      - "4571:4571" # Elasticsearch Port
+      - "4572:4572" # S3 Port
+      - "4574:4574" # Lambda Port
+      - "8088:8088" # Web-UI Port
+
   zookeeper:
     image: confluentinc/cp-zookeeper
     container_name: zookeeper

@@ -40,3 +40,11 @@ rest:
 kafka:
   groupId: group1
   bootstrapAddress: localhost:9092
+
+s3:
+  credentials:
+    accessKey: test
+    secretKey: test
+  endpoint: http://localhost:4566
+  bucket-name: sample-bucket
+  region: us-east-1

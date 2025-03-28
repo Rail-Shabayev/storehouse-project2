@@ -7,6 +7,8 @@ import com.example.rail.exception.ArticleAlreadyExistsException;
 import com.example.rail.exception.ProductNotFoundException;
 import com.example.rail.mapper.ProductMapper;
 import com.example.rail.model.Product;
+import com.example.rail.model.ProductImage;
+import com.example.rail.repository.ProductImageRepository;
 import com.example.rail.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +28,23 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper mapper;
     private final ExchangeRateProvider exchangeRateProvider;
+    private final ProductImageRepository productImageRepository;
+    private final S3Service s3Service;
+
+    @Transactional
+    public UUID uploadProductImage(UUID productId, MultipartFile image) {
+        ProductImage productImage = new ProductImage();
+        productImage.setProduct(mapper.dtoToProduct(getProduct(productId)));
+        UUID imageId = productImageRepository.save(productImage).getImageId();
+        s3Service.uploadFileToBucket(imageId.toString(), image);
+        return imageId;
+    }
+
+    @Transactional
+    public void downloadProductImagesZip(UUID productId) {
+        List<String> imageKeys = productImageRepository.findAllByProductId(productId);
+        s3Service.downloadFilesFromBucket(imageKeys, productId);
+    }
 
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         return new PageImpl<>(productRepository.findAll(pageable)

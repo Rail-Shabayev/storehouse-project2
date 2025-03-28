@@ -13,7 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,4 +120,7 @@ public interface ProductController {
     })
     Page<ProductResponseDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria);
 
+    void downloadProductImagesZip(@PathVariable UUID id);
+
+    UUID uploadFile(@PathVariable UUID id, @RequestParam MultipartFile multipartFile) throws IOException;
 }

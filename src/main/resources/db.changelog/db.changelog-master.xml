@@ -6,6 +6,7 @@
     <include file="/db.changelog/003-create-table-customer.xml" relativeToChangelogFile="false"/>
     <include file="/db.changelog/002-create-table-order.xml" relativeToChangelogFile="false"/>
     <include file="/db.changelog/004-create-table-order-item.xml" relativeToChangelogFile="false"/>
+    <include file="/db.changelog/005-create-table-product-image.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
       
       

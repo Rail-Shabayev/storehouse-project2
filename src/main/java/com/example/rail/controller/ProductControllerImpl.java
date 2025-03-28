@@ -19,12 +19,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.tomcat.util.http.fileupload.FileUploadBase.MULTIPART_FORM_DATA;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
@@ -35,6 +39,16 @@ public class ProductControllerImpl implements ProductController {
 
     private final ProductServiceImpl productServiceImpl;
     private final ProductMapper productMapper;
+
+    @PostMapping(value = "/{id}/upload", consumes = MULTIPART_FORM_DATA)
+    public UUID uploadFile(@PathVariable UUID id, @RequestParam MultipartFile multipartFile) throws IOException {
+        return productServiceImpl.uploadProductImage(id, multipartFile);
+    }
+
+    @GetMapping(value ="/{id}/download", produces ="application/zip")
+    public void downloadProductImagesZip(@PathVariable UUID id) {
+        productServiceImpl.downloadProductImagesZip(id);
+    }
 
     @GetMapping
     public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
