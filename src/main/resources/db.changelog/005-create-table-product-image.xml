@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-productImage" author="Margarita Mashkova w. Rail Shabayev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_image"/>
+            </not>
+        </preConditions>
+        <createTable tableName="product_image" remarks="Таблица картинок товаров">
+            <column name="image_id" type="UUID" remarks="Ключ картинки">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_id" type="UUID" remarks="Внешний ключ товара">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="product_image"
+                                 baseColumnNames="product_id"
+                                 constraintName="fk_product_id"
+                                 referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

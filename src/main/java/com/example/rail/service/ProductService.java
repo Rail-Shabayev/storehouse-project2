@@ -1,10 +1,12 @@
 package com.example.rail.service;
 
-import com.example.rail.dto.search.AbstractCriteria;
 import com.example.rail.dto.product.ProductDto;
+import com.example.rail.dto.search.AbstractCriteria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,5 +22,9 @@ public interface ProductService {
     void deleteProduct(UUID uuid);
 
     Page<ProductDto> searchProduct(Pageable pageable, List<AbstractCriteria<?>> abstractCriteria);
+
+    UUID uploadProductImage(UUID id, MultipartFile multipartFile) throws IOException;
+
+    void downloadProductImagesZip(UUID filename);
 }
 
